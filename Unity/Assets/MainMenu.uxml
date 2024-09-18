@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgb(66, 79, 118);">
+        <ui:Button text="Create Account" parse-escape-sequences="true" display-tooltip-when-elided="true" name="createaccount" style="-unity-text-align: middle-center;" />
+        <ui:Button text="Login" parse-escape-sequences="true" display-tooltip-when-elided="true" name="login" />
+    </ui:VisualElement>
+</ui:UXML>

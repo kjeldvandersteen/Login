@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="createaccount" style="flex-grow: 1; background-color: rgb(66, 79, 118);">
+        <ui:TextField picking-mode="Ignore" label="Email" name="Email" />
+        <ui:TextField picking-mode="Ignore" label="Username" name="Username" />
+        <ui:TextField picking-mode="Ignore" label="Password" name="Password" password="true" />
+        <ui:Button text="Submit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Submit" />
+        <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="back" />
+    </ui:VisualElement>
+</ui:UXML>
