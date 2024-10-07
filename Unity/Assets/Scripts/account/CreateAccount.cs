@@ -9,28 +9,27 @@ public class CreateAccount : MonoBehaviour
 {
     private UIDocument UIDocument;
     [SerializeField] private GameObject MainMenu;
-    private string url = "http://127.0.0.1/edsa-webdev/CreateAccount.php";
+    private string url = "http://127.0.0.1/edsa-webdev/accountManager.php";
+
+    private TextField email;
+    private TextField username;
+    private TextField password;
+
     private void OnEnable()
     {
         UIDocument = GetComponent<UIDocument>();
         VisualElement root = UIDocument.rootVisualElement;
 
-        TextField email = root.Q<TextField>("Email");
-        TextField username = root.Q<TextField>("Username");
-        TextField password = root.Q<TextField>("Password");
+        email = root.Q<TextField>("Email");
+        username = root.Q<TextField>("Username");
+        password = root.Q<TextField>("Password");
 
         Button submit = root.Q<Button>("Submit");
         Button back = root.Q<Button>("back");
 
         submit.RegisterCallback<ClickEvent>(evt =>
         {
-
-            StartCoroutine(CreateAccountRequestAsync(new CreateAccountRequest
-            {
-                email = email.text,
-                usermane = username.text,
-                password = password.text
-            }));
+            StartCoroutine(CreateAccountRequest());
         });
 
         back.RegisterCallback<ClickEvent>(evt =>
@@ -40,72 +39,48 @@ public class CreateAccount : MonoBehaviour
         });
     }
 
-    private IEnumerator CreateAccountRequestAsync(CreateAccountRequest request)
+
+    private IEnumerator CreateAccountRequest()
     {
-        string json = JsonUtility.ToJson(request);
-        List<IMultipartFormSection> form = new List<IMultipartFormSection>();
-        form.Add(new MultipartFormDataSection("data", json));
-        using (UnityWebRequest webRequest = UnityWebRequest.Post(url, form))
-        {
+        // De volgende instance kun je aanmaken in de coroutine zelf, of je kunt hem als parameter meegeven als je die definieert
+        // De variabelen email en password haal je in dit geval normaal uit de TextFields
+        CreateAccountRequest request = new CreateAccountRequest();
+        request.email = email.text;
+        request.username = username.text;
+        request.password = password.text;
 
-            // Zet er een timeout op, bijvoorbeeld 10 seconden, zodat de gebruiker niet te lang hoeft te wachten
-            webRequest.timeout = 10;
+        // Zorg dat je je WebRequestHandler class instance kunt aanroepen, in mijn geval doe
+        // ik dat met een FindFirstObjectByType (lelijk) als voorbeeld
+        WebRequestHandler webRequestHandler = FindFirstObjectByType<WebRequestHandler>();
 
-            yield return webRequest.SendWebRequest();
-
-            // Check of er errors waren, gezien het normaal over het internet gaat kan er vanalles mis gaan
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError ||
-                webRequest.result == UnityWebRequest.Result.ProtocolError)
+        yield return StartCoroutine(webRequestHandler.WebRequest<CreateAccountRequest, CreateAccountResponse>(request, response => {
+            if (response != null)
             {
-
-                // Laat de error zien als er iets anders mis gaat als wat er in PHP gebeurd.
-                Debug.LogError($"Request failed: {webRequest.error}");
+                Debug.Log($"Error: {response.status} {response.customMessage}");
             }
             else
             {
-                // Check of de response valide is.
-                if (webRequest.downloadHandler != null && !string.IsNullOrEmpty(webRequest.downloadHandler.text))
-                {
-                    try
-                    {
-                        CreateAccountResponse response = JsonUtility.FromJson<CreateAccountResponse>(webRequest.downloadHandler.text);
-                        // Het is een goed idee om tijdens de development deze twee variabelen te debug loggen.
-                        Debug.Log($"Account created reponse: {response.status}, {response.customMessage}");
-
-                        Debug.Log($"password is: {response.passwordLog}");
-                        // Op deze plek komt de code die het succesvol creëren van het account afhandelt.
-
-                    }
-                    catch (Exception ex)
-                    {
-                        // Mocht hij de JSON niet kunnen decoden, log dan wat het probleem is
-                        Debug.LogError($"Failed to parse response: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Received an empty or null response");
-                }
+                Debug.LogError("Failed to get a valid response.");
             }
-        }
+        }));
+    }
+    
+}
+
+public class CreateAccountRequest : AbstractRequest
+{
+    public string email;
+    public string username;
+    public string password;
+    public CreateAccountRequest()
+    {
+        action = "createAccount";
     }
 }
 
-
 [System.Serializable]
-public class CreateAccountRequest
+public class CreateAccountResponse : AbstractResponse
 {
-    public string action = "createAccount";
-    public string email;
-    public string usermane;
-    public string password;
-
+    public string token;
 }
 
-[System.Serializable]
-public class CreateAccountResponse
-{
-    public string status;
-    public string customMessage;
-    public string passwordLog;
-}
