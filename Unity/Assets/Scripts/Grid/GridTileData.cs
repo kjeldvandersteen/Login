@@ -6,7 +6,8 @@ using UnityEngine;
 public class GridTileData
 {
     //Class met alle data type
-    public Vector2Int gridPos;
+    public int PosX;
+    public int PosY;
     public string plotType;
     public string LastUpdated;
 }

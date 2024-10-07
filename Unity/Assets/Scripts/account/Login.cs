@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class Login : MonoBehaviour
 {
@@ -54,8 +55,9 @@ public class Login : MonoBehaviour
         yield return StartCoroutine(webRequestHandler.WebRequest<LoginRequest, LoginResponse>(request, response => {
             if (response != null)
             {
-                // Hier komt de code die uitgevoerd wordt na een succesvolle response
-                // Je kunt nu uit de 'response' variable je data halen die je terug hebt gekregen van de server
+                if (response.status == "error") return;
+                PlayerPrefs.SetString("Token", response.token);
+                SceneManager.LoadScene(1);
             }
             else
             {

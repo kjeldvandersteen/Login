@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public class GridController : MonoBehaviour
@@ -10,7 +11,7 @@ public class GridController : MonoBehaviour
     [SerializeField] private GameObject TilePrefab;
     [SerializeField] private Transform StartPos;
 
-    private void Start()
+    private void Awake()
     {
         CreateGrid();
     }
@@ -22,17 +23,44 @@ public class GridController : MonoBehaviour
             for (int y = 0; y < GridYLength; y++)
             {
                 GridTile gridTile = Instantiate(TilePrefab, new Vector3(StartPos.position.x + x, 0,StartPos.position.z + y), Quaternion.identity).GetComponent<GridTile>();
-                gridTile.gridTileData.gridPos = new(x, y);
+                gridTile.gridTileData.PosX = x;
+                gridTile.gridTileData.PosY = y;
                 gridTile.gridTileData.plotType = "Empty";
             }
         }
+        PlotRequest request = new PlotRequest();
+        request.token = PlayerPrefs.GetString("Token");
+        Debug.Log(request.token);
+
+        //StartCoroutine(CreateAccountRequest());
+    }
+
+    private IEnumerator CreateAccountRequest()
+    {
+        PlotRequest request = new PlotRequest();
+
+        WebRequestHandler webRequestHandler = FindFirstObjectByType<WebRequestHandler>();
+
+        yield return StartCoroutine(webRequestHandler.WebRequest<PlotRequest, PlotResponse>(request, response => {
+            if (response != null)
+            {
+                Debug.Log($"Error: {response.status} {response.customMessage}");
+            }
+            else
+            {
+                Debug.LogError("Failed to get a valid response.");
+            }
+        }));
     }
 }
 
 public class PlotRequest : AbstractRequest
 {
-    public Vector2Int[] GridPos;
-    public string[] PlotType;
+    public string token;
+    public PlotRequest()
+    {
+        action = "PlotLoad";
+    }
 }
 
 public class PlotResponse : AbstractResponse
