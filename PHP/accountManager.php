@@ -50,8 +50,12 @@ switch ($request->action) {
         include 'Login.php';
         generateToken();
         break;
+    case "logoutRequest":
+        include 'Logout.php';
+        break;
     case "PlotLoad":
         include 'Plotload';
+        break;
     default:
         $response->status = "noValidAction";
         $response->customMessage = "The action does not exist on the server.";

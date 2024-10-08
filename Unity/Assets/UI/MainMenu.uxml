@@ -2,5 +2,6 @@
     <ui:VisualElement style="flex-grow: 1; background-color: rgb(66, 79, 118);">
         <ui:Button text="Create Account" parse-escape-sequences="true" display-tooltip-when-elided="true" name="createaccount" style="-unity-text-align: middle-center;" />
         <ui:Button text="Login" parse-escape-sequences="true" display-tooltip-when-elided="true" name="login" />
+        <ui:Button text="Logout" parse-escape-sequences="true" display-tooltip-when-elided="true" name="logout" />
     </ui:VisualElement>
 </ui:UXML>

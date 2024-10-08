@@ -28,16 +28,14 @@ public class GridController : MonoBehaviour
                 gridTile.gridTileData.plotType = "Empty";
             }
         }
-        PlotRequest request = new PlotRequest();
-        request.token = PlayerPrefs.GetString("Token");
-        Debug.Log(request.token);
 
-        //StartCoroutine(CreateAccountRequest());
+        StartCoroutine(CreateAccountRequest());
     }
 
     private IEnumerator CreateAccountRequest()
     {
         PlotRequest request = new PlotRequest();
+        request.token = PlayerPrefs.GetString("Token");
 
         WebRequestHandler webRequestHandler = FindFirstObjectByType<WebRequestHandler>();
 

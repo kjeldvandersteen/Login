@@ -11,8 +11,6 @@ public class Login : MonoBehaviour
     private UIDocument UIDocument;
     [SerializeField] private GameObject MainMenu;
 
-    private string url = "http://127.0.0.1/edsa-webdev/accountManager.php";
-
     private TextField email;
     private TextField password;
 
@@ -29,7 +27,11 @@ public class Login : MonoBehaviour
 
         submit.RegisterCallback<ClickEvent>(evt =>
         {
-            StartCoroutine(LoginRequest());
+            if (PlayerPrefs.GetString("Token") == string.Empty)
+            {   
+
+                StartCoroutine(LoginRequest());
+            }
         });
 
         back.RegisterCallback<ClickEvent>(evt =>
@@ -55,9 +57,12 @@ public class Login : MonoBehaviour
         yield return StartCoroutine(webRequestHandler.WebRequest<LoginRequest, LoginResponse>(request, response => {
             if (response != null)
             {
-                if (response.status == "error") return;
-                PlayerPrefs.SetString("Token", response.token);
-                SceneManager.LoadScene(1);
+                if (response.status == "error")
+                {
+                    return;
+                }
+                 PlayerPrefs.SetString("Token", response.token);
+                //SceneManager.LoadScene(1);
             }
             else
             {

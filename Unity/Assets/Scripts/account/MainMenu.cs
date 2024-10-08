@@ -8,6 +8,7 @@ public class Main : MonoBehaviour
     private UIDocument UIDocument;
     [SerializeField] private GameObject CreateAccount;
     [SerializeField] private GameObject Login;
+    [SerializeField] private GameObject Logout;
 
     private void OnEnable()
     {
@@ -17,6 +18,7 @@ public class Main : MonoBehaviour
 
         Button createAccount = root.Q<Button>("createaccount");
         Button login = root.Q<Button>("login");
+        Button logout = root.Q<Button>("logout");
 
         createAccount.RegisterCallback<ClickEvent>(evt =>
         {
@@ -30,6 +32,12 @@ public class Main : MonoBehaviour
             this.gameObject.SetActive(false);
             Login.SetActive(true);
         
+        });
+
+        logout.RegisterCallback<ClickEvent>(evt =>
+        {
+            this.gameObject.SetActive(false);
+            Logout.gameObject.SetActive(true);
         });
     }
 }

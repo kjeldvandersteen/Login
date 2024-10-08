@@ -2,35 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System;
-using UnityEngine.Networking;
 
-public class CreateAccount : MonoBehaviour
+public class Logout : MonoBehaviour
 {
     private UIDocument UIDocument;
     [SerializeField] private GameObject MainMenu;
 
-    private TextField email;
-    private TextField username;
-    private TextField password;
 
     private void OnEnable()
     {
         UIDocument = GetComponent<UIDocument>();
         VisualElement root = UIDocument.rootVisualElement;
 
-        email = root.Q<TextField>("Email");
-        username = root.Q<TextField>("Username");
-        password = root.Q<TextField>("Password");
-
-        Button submit = root.Q<Button>("Submit");
+        Button Logout = root.Q<Button>("logout");
         Button back = root.Q<Button>("back");
 
-        submit.RegisterCallback<ClickEvent>(evt =>
+        Logout.RegisterCallback<ClickEvent>(evt =>
         {
-            if (PlayerPrefs.GetString("Token") == string.Empty)
+            if (PlayerPrefs.GetString("Token") != string.Empty)
             {
-                StartCoroutine(CreateAccountRequest());
+                StartCoroutine(LogoutRequest());
             }
         });
 
@@ -39,23 +30,22 @@ public class CreateAccount : MonoBehaviour
             this.gameObject.SetActive(false);
             MainMenu.SetActive(true);
         });
+
     }
 
-
-    private IEnumerator CreateAccountRequest()
+    private IEnumerator LogoutRequest()
     {
         // De volgende instance kun je aanmaken in de coroutine zelf, of je kunt hem als parameter meegeven als je die definieert
         // De variabelen email en password haal je in dit geval normaal uit de TextFields
-        CreateAccountRequest request = new CreateAccountRequest();
-        request.email = email.text;
-        request.username = username.text;
-        request.password = password.text;
+        LogoutRequest request = new LogoutRequest();
+        request.token = PlayerPrefs.GetString("Token");
+        Debug.Log(request.token);
 
         // Zorg dat je je WebRequestHandler class instance kunt aanroepen, in mijn geval doe
         // ik dat met een FindFirstObjectByType (lelijk) als voorbeeld
         WebRequestHandler webRequestHandler = FindFirstObjectByType<WebRequestHandler>();
 
-        yield return StartCoroutine(webRequestHandler.WebRequest<CreateAccountRequest, CreateAccountResponse>(request, response => {
+        yield return StartCoroutine(webRequestHandler.WebRequest<LogoutRequest, LogoutResponse>(request, response => {
             if (response != null)
             {
                 Debug.Log($"Error: {response.status} {response.customMessage}");
@@ -63,7 +53,7 @@ public class CreateAccount : MonoBehaviour
                 {
                     return;
                 }
-                PlayerPrefs.SetString("Token", response.token);
+                PlayerPrefs.DeleteKey("Token");
             }
             else
             {
@@ -71,23 +61,20 @@ public class CreateAccount : MonoBehaviour
             }
         }));
     }
-    
+
 }
 
-public class CreateAccountRequest : AbstractRequest
+public class LogoutRequest : AbstractRequest
 {
-    public string email;
-    public string username;
-    public string password;
-    public CreateAccountRequest()
+    public string token;
+    public LogoutRequest()
     {
-        action = "createAccount";
+        action = "logoutRequest";
     }
 }
 
 [System.Serializable]
-public class CreateAccountResponse : AbstractResponse
+public class LogoutResponse : AbstractResponse
 {
-    public string token;
 }
 

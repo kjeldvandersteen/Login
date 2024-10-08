@@ -8,4 +8,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $result['user_id'] = $userid;
 
+$response->status = "error";
+$response->customMessage = $userid;
+die (json_encode($response));
 
