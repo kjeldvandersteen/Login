@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 
 public class WebRequestHandler : MonoBehaviour
 {
-    private string url = "http://127.0.0.1/edsa-webdev/accountManager.php";
+    private string url = "http://127.0.0.1/edsa-webdev/API.php";
 
     public IEnumerator WebRequest<TRequest, TResponse>(TRequest request, Action<TResponse> onComplete)
         where TRequest : AbstractRequest

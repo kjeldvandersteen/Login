@@ -23,13 +23,28 @@ if (password_verify($request->password, $hash)) {
     $stmt->bindparam(":id", $result['user_id']);
     $stmt->execute();
     
-    $response->status = "ingelogd";
-    $response->customMessage = "gefeliciteerd";
-    $response->token = $token;
-    die(json_encode($response));
+    
 }
 else {
     $response->status = "error";
     $response->customMessage = "onjuist wachtwoord";
     die(json_encode($response));
 }
+
+
+$stmt = $conn->prepare("SELECT * FROM users WHERE token = :token");
+$stmt->bindParam(":token", $token);
+$stmt->execute();
+if ($stmt->rowCount() == 0) {
+    $response->status = "invalid_token";
+    $response->customMessage = "Token not found";
+    die(json_encode($response));
+}
+
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+$userid = $result['user_id'];
+
+$response->status = "ingelogd";
+$response->customMessage = "gefeliciteerd";
+$response->token = $userid;
+die(json_encode($response));

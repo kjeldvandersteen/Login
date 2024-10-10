@@ -44,25 +44,19 @@ public class Login : MonoBehaviour
 
     private IEnumerator LoginRequest()
     {
-        // De volgende instance kun je aanmaken in de coroutine zelf, of je kunt hem als parameter meegeven als je die definieert
-        // De variabelen email en password haal je in dit geval normaal uit de TextFields
         LoginRequest request = new LoginRequest();
         request.email = email.text;
         request.password = password.text;
-
-        // Zorg dat je je WebRequestHandler class instance kunt aanroepen, in mijn geval doe
-        // ik dat met een FindFirstObjectByType (lelijk) als voorbeeld
+        
         WebRequestHandler webRequestHandler = FindFirstObjectByType<WebRequestHandler>();
 
         yield return StartCoroutine(webRequestHandler.WebRequest<LoginRequest, LoginResponse>(request, response => {
             if (response != null)
             {
-                if (response.status == "error")
+                if (response.status == "ingelogd")
                 {
-                    return;
+                    PlayerPrefs.SetString("Token", response.token);
                 }
-                 PlayerPrefs.SetString("Token", response.token);
-                //SceneManager.LoadScene(1);
             }
             else
             {

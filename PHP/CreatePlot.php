@@ -1,5 +1,5 @@
 <?php
-
+//kijken op welke user het gebouwd moet worden
 $stmt = $conn->prepare("SELECT * FROM users WHERE token = :token");
 $stmt->bindParam(":token", $request->token);
 $stmt->execute();
@@ -12,6 +12,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $userid = $result['user_id'];
 
+//Check of de tile al gebouwd is
 $stmt = $conn->prepare("SELECT * FROM grid WHERE user_id = $userid AND PosX = :posX AND PosY = :posY");
 $stmt->execute([
     ":posX" => $request->gridTileData->PosX,

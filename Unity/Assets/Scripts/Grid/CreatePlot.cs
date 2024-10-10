@@ -26,9 +26,7 @@ public class CreatePlot : MonoBehaviour
             {
                 if (gridTile.gridTileData.PlotType == "Empty")
                 {
-                    Debug.Log(FindFirstObjectByType<GridController>());
-                    StartCoroutine(FindFirstObjectByType<GridController>().AttemptToCreatePlotAsync(gridTile, "corn"));
-                    
+                    StartCoroutine(FindFirstObjectByType<GridController>().AttemptToCreatePlotAsync(gridTile, "corn")); 
                 }
             }
         }
@@ -37,13 +35,4 @@ public class CreatePlot : MonoBehaviour
             Debug.Log("Helaas pindakaas");
         }
     }
-
-    /*private IEnumerator AttemptToCreatePlotAsync(GridTile gridTile, string plotType)
-    {
-
-        if (false) // temp
-        {
-            
-        }
-    }*/
 }
