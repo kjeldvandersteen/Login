@@ -8,6 +8,6 @@ public class GridTileData
     //Class met alle data type
     public int PosX;
     public int PosY;
-    public string plotType;
+    public string PlotType;
     public string LastUpdated;
 }

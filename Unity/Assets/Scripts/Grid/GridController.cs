@@ -25,24 +25,35 @@ public class GridController : MonoBehaviour
                 GridTile gridTile = Instantiate(TilePrefab, new Vector3(StartPos.position.x + x, 0,StartPos.position.z + y), Quaternion.identity).GetComponent<GridTile>();
                 gridTile.gridTileData.PosX = x;
                 gridTile.gridTileData.PosY = y;
-                gridTile.gridTileData.plotType = "Empty";
+                gridTile.gridTileData.PlotType = "Empty";
             }
         }
 
-        StartCoroutine(CreateAccountRequest());
+        //StartCoroutine(CreateAccountRequest());
     }
 
-    private IEnumerator CreateAccountRequest()
+    public IEnumerator AttemptToCreatePlotAsync(GridTile gridTile, string newPlotType)
     {
-        PlotRequest request = new PlotRequest();
+        CreatePlotRequest request = new CreatePlotRequest();
+        request.gridTileData = gridTile.gridTileData;
+        request.newPlotType = newPlotType;
         request.token = PlayerPrefs.GetString("Token");
 
         WebRequestHandler webRequestHandler = FindFirstObjectByType<WebRequestHandler>();
 
-        yield return StartCoroutine(webRequestHandler.WebRequest<PlotRequest, PlotResponse>(request, response => {
+        yield return StartCoroutine(webRequestHandler.WebRequest<CreatePlotRequest, CreatePlotResponse>(request, response => {
             if (response != null)
             {
-                Debug.Log($"Error: {response.status} {response.customMessage}");
+                if (response.status == "succes")
+                {
+                    gridTile.gridTileData.PlotType = newPlotType;
+                    gridTile.GetComponent<MeshRenderer>().material.color = Color.white;
+                } else
+                {
+                    Debug.Log("Server zegt dat het niet mag");
+                }
+                Debug.Log($"Response: {response.status} {response.customMessage}");
+                
             }
             else
             {
@@ -52,16 +63,18 @@ public class GridController : MonoBehaviour
     }
 }
 
-public class PlotRequest : AbstractRequest
+public class CreatePlotRequest : AbstractRequest
 {
     public string token;
-    public PlotRequest()
+    public GridTileData gridTileData;
+    public string newPlotType;
+    public CreatePlotRequest()
     {
-        action = "PlotLoad";
+        action = "CreatePlot";
     }
 }
 
-public class PlotResponse : AbstractResponse
+public class CreatePlotResponse : AbstractResponse
 {
 
 }

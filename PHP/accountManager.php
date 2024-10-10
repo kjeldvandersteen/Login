@@ -53,8 +53,8 @@ switch ($request->action) {
     case "logoutRequest":
         include 'Logout.php';
         break;
-    case "PlotLoad":
-        include 'Plotload';
+    case "CreatePlot":
+        include 'CreatePlot.php';
         break;
     default:
         $response->status = "noValidAction";
@@ -63,7 +63,7 @@ switch ($request->action) {
 }
 
 function getDatabaseConnection() {
-    $dbHost = 'localhost';
+    $dbHost = '127.0.0.1';
     $dbName = 'example';
     $dbUser = 'root';
     $dbPass = '';

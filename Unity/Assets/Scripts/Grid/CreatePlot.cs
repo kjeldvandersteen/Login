@@ -21,10 +21,15 @@ public class CreatePlot : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, LayerMask))
         {
-            if (hit.transform.gameObject.GetComponent<GridTile>().gridTileData.plotType == "Empty")
+            GridTile gridTile = hit.transform.gameObject.GetComponent<GridTile>();
+            if (gridTile != null)
             {
-                hit.transform.gameObject.GetComponent<GridTile>().gridTileData.plotType = "Plot";
-                hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+                if (gridTile.gridTileData.PlotType == "Empty")
+                {
+                    Debug.Log(FindFirstObjectByType<GridController>());
+                    StartCoroutine(FindFirstObjectByType<GridController>().AttemptToCreatePlotAsync(gridTile, "corn"));
+                    
+                }
             }
         }
         else
@@ -32,4 +37,13 @@ public class CreatePlot : MonoBehaviour
             Debug.Log("Helaas pindakaas");
         }
     }
+
+    /*private IEnumerator AttemptToCreatePlotAsync(GridTile gridTile, string plotType)
+    {
+
+        if (false) // temp
+        {
+            
+        }
+    }*/
 }

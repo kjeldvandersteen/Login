@@ -87,4 +87,5 @@ public class LoginRequest : AbstractRequest
 public class LoginResponse : AbstractResponse
 {
     public string token;
+    public GridTileData[] gridTileDatas;
 }
